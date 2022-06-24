@@ -1562,7 +1562,7 @@ body.menu-opened .mainmenu {
 .blog-i .blog-cont {
 	width: 50%;
 	position: relative;
-	<!--border-bottom: 1px solid #f1f1f1;-->
+	/* <!--border-bottom: 1px solid #f1f1f1;--> LOOKUP*/
 	padding: 43px 48px 19px 48px;
 	font-size: 16px;
 	line-height: 190%;
