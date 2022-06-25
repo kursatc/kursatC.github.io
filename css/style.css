@@ -631,9 +631,15 @@ body.menu-opened .mainmenu {
     -webkit-transition: all 0.2s;
     transition: all 0.2s;
     background: transparent;/*url(../img/kapak-TopSlider3.jpg) no-repeat scroll center center;*/
-    border-radius: 90px 0 90px 0;
-
-
+}
+.topSliderKapakImage
+{
+	border-radius: 120px 0px 120px 0px;
+	margin-top:-75px; 
+	z-index:-3; 
+	opacity:0.6; 
+	width:100%; 
+	height:117%
 }
 .topslider .slider {
 	margin: 0 auto;
