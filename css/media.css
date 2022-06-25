@@ -1790,3 +1790,22 @@
 	height: 23vh;
 	}
 }
+
+@media (min-width : 1px) and (max-width : 280px) {
+	.topslider {
+        height: 150px;
+    }
+
+    .topSliderKapakImage {
+        height: 155px !important;
+    }
+	.blog-img, .blog-img a
+	{
+    -webkit-transform:scale(1); /* Safari and Chrome */
+    -moz-transform:scale(1); /* Firefox */
+    -ms-transform:scale(1); /* IE 9 */
+    -o-transform:scale(1); /* Opera */
+    transform:scale(1);
+	height: 20vh;
+	}
+}
