@@ -1778,9 +1778,8 @@
     }
 	.topSliderKapakImage
 	{
-		height: 20vh !important;
+		height: 18vh !important;
 		width: 100vw !important;
-		
 		opacity:0.9; 
 	}
 
