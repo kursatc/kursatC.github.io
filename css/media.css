@@ -1526,14 +1526,14 @@
     .topSliderKapakImage {
         height: 50vh !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 40vh;
+	height: 40vh !important;
 	}
 }
 
@@ -1544,14 +1544,14 @@
     .topSliderKapakImage {
         height: 47vh !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 40vh;
+	height: 40vh !important;
 	}
 }
 
@@ -1562,14 +1562,14 @@
     .topSliderKapakImage {
         height: 46vh !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 35vh;
+	height: 35vh !important;
 	}
 }
 
@@ -1580,15 +1580,14 @@
     .topSliderKapakImage {
         height: 430px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 50vh;
-	width: auto;
+	height: 50vh !important;
 	}
 }
 
@@ -1599,15 +1598,14 @@
     .topSliderKapakImage {
         height: 410px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 50vh;
-	width: auto;
+	height: 50vh !important;
 	}
 }
 
@@ -1618,14 +1616,14 @@
     .topSliderKapakImage {
         height: 390px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 70vh;
+	height: 70vh !important;
 	}
 }
 
@@ -1636,14 +1634,14 @@
     .topSliderKapakImage {
         height: 370px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 70vh;
+	height: 70vh !important;
 	}
 }
 
@@ -1654,14 +1652,14 @@
     .topSliderKapakImage {
         height: 350px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 65vh;
+	height: 65vh !important;
 	}
 }
 
@@ -1672,14 +1670,14 @@
     .topSliderKapakImage {
         height: 330px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 60vh;
+	height: 60vh !important;
 	}
 }
 
@@ -1690,14 +1688,14 @@
     .topSliderKapakImage {
         height: 310px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 45vh;
+	height: 45vh !important;
 	}
 }
 
@@ -1708,14 +1706,14 @@
     .topSliderKapakImage {
         height: 290px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 35vh;
+	height: 35vh !important;
 	}
 }
 
@@ -1726,14 +1724,14 @@
     .topSliderKapakImage {
         height: 270px !important;
     }
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 30vh;
+	height: 34vh !important;
 	}
 }
 
@@ -1745,14 +1743,14 @@
         height: 210px !important;
     }
   
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 30vh;
+	height: 34vh !important;
 	}
 }
 @media (min-width : 481px) and (max-width : 625px) {
@@ -1762,15 +1760,14 @@
     .topSliderKapakImage {
         height: 17vh !important;
     }
-  
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 26vh;
+	height: 26vh !important;
 	}
 }
 
@@ -1783,7 +1780,7 @@
         height: 155px !important;
     }
 
-	.blog-img a
+	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
     -moz-transform:scale(1); /* Firefox */
