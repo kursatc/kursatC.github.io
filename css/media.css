@@ -1772,33 +1772,18 @@
 }
 
 @media (min-width : 281px) and (max-width : 480px) {
-    .topslider {
-        height: 150px;
-    }
-
-    .topSliderKapakImage {
-        height: 155px !important;
-    }
-
-	.blog-img, .blog-img a
-	{
-    -webkit-transform:scale(1); /* Safari and Chrome */
-    -moz-transform:scale(1); /* Firefox */
-    -ms-transform:scale(1); /* IE 9 */
-    -o-transform:scale(1); /* Opera */
-    transform:scale(1);
-	height: 23vh;
-	}
-}
-
-@media (min-width : 1px) and (max-width : 280px) {
 	.topslider {
-        height: 150px;
+        height: 50vh;
+		margin-bottom: -90px;
     }
+	.topSliderKapakImage
+	{
+		height: 36vh !important;
+		width: 100vw !important;
+		
+		opacity:0.9; 
+	}
 
-    .topSliderKapakImage {
-        height: 155px !important;
-    }
 	.blog-img, .blog-img a
 	{
     -webkit-transform:scale(1); /* Safari and Chrome */
@@ -1806,6 +1791,10 @@
     -ms-transform:scale(1); /* IE 9 */
     -o-transform:scale(1); /* Opera */
     transform:scale(1);
-	height: 20vh;
+	height: 33vh !important;
+	}
+	.header
+	{
+		margin-top: -40px;
 	}
 }
