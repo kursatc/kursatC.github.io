@@ -1773,12 +1773,12 @@
 
 @media (min-width : 281px) and (max-width : 480px) {
 	.topslider {
-        height: 50vh;
-		margin-bottom: -90px;
+        height: 40vh;
+		margin-bottom: -190px;
     }
 	.topSliderKapakImage
 	{
-		height: 36vh !important;
+		height: 20vh !important;
 		width: 100vw !important;
 		
 		opacity:0.9; 
