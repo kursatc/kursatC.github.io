@@ -127,7 +127,660 @@
                 </div>
 		 <div style="text-align: center">
 <h1 style="color:white; "> Software Development for Parallel Computers </h1><br>
+<div style="background: #202020; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #999999; font-style: italic">/*</span>
+<span style="color: #999999; font-style: italic"> * CMP641 - Software Development for Parallel Computers</span>
+<span style="color: #999999; font-style: italic"> * N21138461 - Kursat Cakal</span>
+<span style="color: #999999; font-style: italic"> * Term Project Parallel Matrix Multiplication</span>
+<span style="color: #999999; font-style: italic"> */</span>
 
+<span style="color: #cd2828; font-weight: bold">#include &quot;dependencies.h&quot;</span>
+
+<span style="color: #6ab825; font-weight: bold">int</span> <span style="color: #447fcf">main</span><span style="color: #d0d0d0">()</span> 
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">fillRandomArray(inputImage);</span>
+	<span style="color: #d0d0d0">fillEmptyArray(outputImage);</span>
+
+	<span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">threadCalculation</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span>
+	<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;Thread Rate : %d&quot;</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">threadCalculation);</span>
+
+	<span style="color: #d0d0d0">parallelMultiplication_Stable_Master();</span>
+	<span style="color: #d0d0d0">serialMultiplication_Stable_Master();</span>
+	<span style="color: #d0d0d0">printArray(inputImage,</span><span style="color: #ed9d13">&quot;Input Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">serialMultiplication_Stable();</span>
+
+	<span style="color: #d0d0d0">parallelMultiplication_Method1();</span>
+
+	<span style="color: #d0d0d0">parallelMultiplication_Method_Stable_Non_Schedule();</span>
+
+	<span style="color: #d0d0d0">serialMultiplication_Stable();</span>
+	<span style="color: #d0d0d0">parallelMultiplication_Method_Stable_1();</span>
+	<span style="color: #d0d0d0">parallelMultiplication_Method_Stable_2();</span>
+
+	<span style="color: #d0d0d0">serialMultiplication();</span>
+	<span style="color: #d0d0d0">parallelMultiplication_Method1();</span>
+	<span style="color: #d0d0d0">parallelMultiplication_Method2();</span>
+	<span style="color: #d0d0d0">parallelMultiplication_Method3();</span>
+
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">ifdef</span> <span style="color: #d0d0d0">encapsulatedVersion</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">static</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">OMP_SCHEDULE_ITER_NUMBER)</span> <span style="color: #d0d0d0">collapse(OMP_SCHEDULE_COLLAPSE_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,</span> <span style="color: #d0d0d0">outputImage)</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #d0d0d0">getDiagonalMatrix(inputImage,</span> <span style="color: #d0d0d0">diagonallyMirroredArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				<span style="color: #d0d0d0">getSubMatrix(inputImage,</span> <span style="color: #d0d0d0">flowArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">flowArray[manualIteratorRow][k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">diagonallyMirroredArray[k][manualIteratorCol++];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #d0d0d0">manualIteratorRow++;</span>
+					<span style="color: #d0d0d0">}</span>
+					<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">1</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">static</span><span style="color: #d0d0d0">,OMP_SCHEDULE_ITER_NUMBER)</span> <span style="color: #d0d0d0">collapse(OMP_SCHEDULE_COLLAPSE_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,</span> <span style="color: #d0d0d0">outputImage)</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #d0d0d0">getDiagonalMatrix(inputImage,</span> <span style="color: #d0d0d0">diagonallyMirroredArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				<span style="color: #d0d0d0">getSubMatrix(inputImage,</span> <span style="color: #d0d0d0">flowArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">critical</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">flowArray[manualIteratorRow][k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">diagonallyMirroredArray[k][manualIteratorCol++];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #d0d0d0">manualIteratorRow++;</span>
+					<span style="color: #d0d0d0">}</span>
+					<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">1</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">static</span><span style="color: #d0d0d0">,OMP_SCHEDULE_ITER_NUMBER)</span> <span style="color: #d0d0d0">collapse(OMP_SCHEDULE_COLLAPSE_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,outputImage)</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">i,j,k;</span>
+
+			<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[i][j+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[j+k][i];</span>
+					<span style="color: #d0d0d0">}</span>
+					<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">2</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">endif</span>
+
+	<span style="color: #999999; font-style: italic">//printArray(inputImage,&quot;Input Image&quot;);</span>
+	<span style="color: #999999; font-style: italic">//printArray(outputImage,&quot;Output Image&quot;);</span>
+
+
+	<span style="color: #d0d0d0">stop</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">1</span><span style="color: #d0d0d0">;</span>
+	<span style="color: #6ab825; font-weight: bold">return</span> <span style="color: #3677a9">0</span> <span style="color: #d0d0d0">;</span>
+
+<span style="color: #d0d0d0">}</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">serialMultiplication</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #d0d0d0">getDiagonalMatrix(inputImage,</span> <span style="color: #d0d0d0">diagonallyMirroredArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				<span style="color: #d0d0d0">getSubMatrix(inputImage,</span> <span style="color: #d0d0d0">flowArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">flowArray[manualIteratorRow][k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">diagonallyMirroredArray[k][manualIteratorCol++];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #d0d0d0">manualIteratorRow++;</span>
+					<span style="color: #d0d0d0">}</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">1</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">serialMultiplication_Stable</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[i][j+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[j+k][i];</span>
+						<span style="color: #d0d0d0">}</span>
+					<span style="color: #d0d0d0">}</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">100</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">serialMultiplication_Stable_Enhanced</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[i][j+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[j+k][i];</span>
+						<span style="color: #d0d0d0">}</span>
+					<span style="color: #d0d0d0">}</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">100</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">serialMultiplication_Stable_Master</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">rA,cA;</span>
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">rB,cB;</span>
+
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #d0d0d0">rA</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+				<span style="color: #d0d0d0">cA</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+
+				<span style="color: #d0d0d0">rB</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+				<span style="color: #d0d0d0">cB</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[rA][cA+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[rB+k][cB];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #d0d0d0">cB++;</span>
+						<span style="color: #d0d0d0">rA++;</span>
+					<span style="color: #d0d0d0">}</span>
+					<span style="color: #d0d0d0">rB++;</span>
+					<span style="color: #d0d0d0">cA++;</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">100</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method1</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #999999; font-style: italic">//#pragma omp parallel for schedule(static,OMP_SCHEDULE_ITER_NUMBER) collapse(OMP_SCHEDULE_COLLAPSE_NUMBER) private(outerIterRow, outerIterCol) shared(inputImage, outputImage)</span>
+	<span style="color: #999999; font-style: italic">//#pragma omp parallel for private(outerIterRow, outerIterCol) shared(inputImage, outputImage)</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">num_threads(</span><span style="color: #3677a9">8</span><span style="color: #d0d0d0">)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol,</span> <span style="color: #d0d0d0">manualIteratorRow,</span> <span style="color: #d0d0d0">manualIteratorCol)</span> <span style="color: #d0d0d0">shared(inputImage,</span> <span style="color: #d0d0d0">outputImage,</span> <span style="color: #d0d0d0">flowArray,</span> <span style="color: #d0d0d0">diagonallyMirroredArray)</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">auto</span><span style="color: #d0d0d0">)</span>
+    <span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+    <span style="color: #d0d0d0">{</span>
+        <span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+        <span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #999999; font-style: italic">//getDiagonalMatrix(inputImage, diagonallyMirroredArray, outerIterRow, outerIterCol);</span>
+				<span style="color: #999999; font-style: italic">//getSubMatrix(inputImage, flowArray, outerIterRow, outerIterCol);</span>
+
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">critical</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">flowArray[manualIteratorRow][k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">diagonallyMirroredArray[k][manualIteratorCol++];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #d0d0d0">manualIteratorRow++;</span>
+					<span style="color: #d0d0d0">}</span>
+					<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;Thread Number - %d&quot;</span><span style="color: #d0d0d0">,omp_get_thread_num());</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+
+        <span style="color: #d0d0d0">}</span>
+    <span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">1</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+	<span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+	<span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method2</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #d0d0d0">getDiagonalMatrix(inputImage,</span> <span style="color: #d0d0d0">diagonallyMirroredArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+					<span style="color: #d0d0d0">getSubMatrix(inputImage,</span> <span style="color: #d0d0d0">flowArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+					
+					<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+					<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+					<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">static</span><span style="color: #d0d0d0">,OMP_SCHEDULE_ITER_NUMBER)</span> <span style="color: #d0d0d0">collapse(OMP_SCHEDULE_COLLAPSE_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,</span> <span style="color: #d0d0d0">outputImage)</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+							<span style="color: #d0d0d0">{</span>
+								<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">critical</span>
+								<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">flowArray[manualIteratorRow][k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">diagonallyMirroredArray[k][manualIteratorCol++];</span>
+							<span style="color: #d0d0d0">}</span>
+							<span style="color: #d0d0d0">manualIteratorRow++;</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+					<span style="color: #d0d0d0">}</span>
+				<span style="color: #d0d0d0">}</span>
+
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">1</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method3</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+    <span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+    <span style="color: #d0d0d0">{</span>
+        <span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+        <span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #d0d0d0">getDiagonalMatrix(inputImage,</span> <span style="color: #d0d0d0">diagonallyMirroredArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				<span style="color: #d0d0d0">getSubMatrix(inputImage,</span> <span style="color: #d0d0d0">flowArray,</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol);</span>
+				
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+				<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+				<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">static</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">OMP_SCHEDULE_ITER_NUMBER)</span> <span style="color: #d0d0d0">collapse(OMP_SCHEDULE_COLLAPSE_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,</span> <span style="color: #d0d0d0">outputImage)</span>
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">flowArray[manualIteratorRow][k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">diagonallyMirroredArray[k][manualIteratorCol++];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #d0d0d0">manualIteratorRow++;</span>
+					<span style="color: #d0d0d0">}</span>
+					<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+        <span style="color: #d0d0d0">}</span>
+    <span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">1</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method_Stable_Non_Schedule</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">num_threads(OMP_MANUAL_THREAD_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,</span> <span style="color: #d0d0d0">outputImage)</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">auto</span><span style="color: #d0d0d0">)</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[i][j+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[j+k][i];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+					<span style="color: #d0d0d0">}</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #999999; font-style: italic">//printArray(outputImage,&quot;Output Image&quot;);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">100</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Stable_Master</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #999999; font-style: italic">//#pragma omp parallel for num_threads(OMP_MANUAL_THREAD_NUMBER) private(outerIterRow, outerIterCol,rA,cA,rB,cB) shared(inputImage, outputImage)</span>
+	<span style="color: #999999; font-style: italic">//#pragma omp parallel for private(outerIterRow, outerIterCol,rA,cA,rB,cB) shared(inputImage, outputImage) schedule(auto)</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">num_threads(</span><span style="color: #3677a9">8</span><span style="color: #d0d0d0">)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol,rA,cA,rB,cB)</span> <span style="color: #d0d0d0">shared(inputImage,</span> <span style="color: #d0d0d0">outputImage)</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #d0d0d0">rA</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+				<span style="color: #d0d0d0">cA</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+
+				<span style="color: #d0d0d0">rB</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+				<span style="color: #d0d0d0">cB</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span>
+
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">critical</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[rA][cA+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[rB+k][cB];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #d0d0d0">cB++;</span>
+						<span style="color: #d0d0d0">rA++;</span>
+					<span style="color: #d0d0d0">}</span>
+					<span style="color: #d0d0d0">rB++;</span>
+					<span style="color: #d0d0d0">cA++;</span>
+					<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;Thread Number - %d&quot;</span><span style="color: #d0d0d0">,omp_get_thread_num());</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">100</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+	<span style="color: #999999; font-style: italic">/*</span>
+<span style="color: #999999; font-style: italic">	#pragma omp parallel for num_threads(12) private(outerIterRow, outerIterCol,rA,cA,rB,cB) shared(inputImage, outputImage)</span>
+<span style="color: #999999; font-style: italic">	for(outerIterRow = 0; outerIterRow &lt; SIZE_WINDOW; outerIterRow++)//for(outerIterRow = lowerDiagonalIndexMinRow; outerIterRow &lt; lowerDiagonalIndexMaxRow; outerIterRow++)</span>
+<span style="color: #999999; font-style: italic">	{</span>
+<span style="color: #999999; font-style: italic">		for(outerIterCol = 0; outerIterCol &lt; SIZE_WINDOW; outerIterCol++)//for(outerIterCol = lowerDiagonalIndexMinCol; outerIterCol &lt; lowerDiagonalIndexMaxCol; outerIterCol++)</span>
+<span style="color: #999999; font-style: italic">	*/</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method_Stable_1</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">static</span><span style="color: #d0d0d0">,OMP_SCHEDULE_ITER_NUMBER)</span> <span style="color: #d0d0d0">collapse(OMP_SCHEDULE_COLLAPSE_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,outputImage)</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[i][j+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[j+k][i];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+					<span style="color: #d0d0d0">}</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">100</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method_Stable_2</span><span style="color: #d0d0d0">()</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">startTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">parallel</span> <span style="color: #6ab825; font-weight: bold">for</span> <span style="color: #d0d0d0">schedule(</span><span style="color: #6ab825; font-weight: bold">static</span><span style="color: #d0d0d0">,OMP_SCHEDULE_ITER_NUMBER)</span> <span style="color: #d0d0d0">collapse(OMP_SCHEDULE_COLLAPSE_NUMBER)</span> <span style="color: #6ab825; font-weight: bold">private</span><span style="color: #d0d0d0">(outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol)</span> <span style="color: #d0d0d0">shared(inputImage,outputImage)</span>
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow;</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow;</span> <span style="color: #d0d0d0">outerIterRow++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol;</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol;</span> <span style="color: #d0d0d0">outerIterCol++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #6ab825; font-weight: bold">if</span><span style="color: #d0d0d0">(outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">outerIterRow)</span>
+			<span style="color: #d0d0d0">{</span>
+				<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+				<span style="color: #d0d0d0">{</span>
+					<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j</span> <span style="color: #d0d0d0">&lt;=</span> <span style="color: #d0d0d0">outerIterCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+					<span style="color: #d0d0d0">{</span>
+						<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(k=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">k</span> <span style="color: #d0d0d0">&lt;</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">k++)</span>
+						<span style="color: #d0d0d0">{</span>
+							<span style="color: #a61717; background-color: #e3d2d2">#</span><span style="color: #d0d0d0">pragma</span> <span style="color: #d0d0d0">omp</span> <span style="color: #d0d0d0">critical</span>
+							<span style="color: #d0d0d0">outputImage[i][j]</span> <span style="color: #d0d0d0">+=</span> <span style="color: #d0d0d0">inputImage[i][j+k]</span> <span style="color: #d0d0d0">*</span> <span style="color: #d0d0d0">inputImage[j+k][i];</span>
+						<span style="color: #d0d0d0">}</span>
+						<span style="color: #999999; font-style: italic">//printf(&quot;Thread Number - %d&quot;,omp_get_thread_num());</span>
+					<span style="color: #d0d0d0">}</span>
+				<span style="color: #d0d0d0">}</span>
+			<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">}</span>
+	<span style="color: #d0d0d0">stopTimeStamp</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">omp_get_wtime();</span>
+	<span style="color: #d0d0d0">printArray(outputImage,</span><span style="color: #ed9d13">&quot;Output Image&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printConsoleNotification(</span><span style="color: #3677a9">100</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">startTimeStamp,</span> <span style="color: #d0d0d0">stopTimeStamp);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">getSubMatrix</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY],</span> <span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pOut[SIZE_WINDOW][SIZE_WINDOW],</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startRow,</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startCol)</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">i,j;</span>
+
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">inRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">inCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=startRow;</span> <span style="color: #d0d0d0">i&lt;</span> <span style="color: #d0d0d0">startRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">i++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=startCol;</span> <span style="color: #d0d0d0">j&lt;</span> <span style="color: #d0d0d0">startCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">SIZE_WINDOW;</span> <span style="color: #d0d0d0">j++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #d0d0d0">pOut[inRow][inCol++]</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">pArray[i][j];</span>
+		<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">inCol=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+		<span style="color: #d0d0d0">inRow++;</span>
+	<span style="color: #d0d0d0">}</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">getDiagonalMatrix</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY],</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pOut[SIZE_WINDOW][SIZE_WINDOW],</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startRow,</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startCol)</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">i,j;</span>
+
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">inRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+	<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">inCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+
+	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=startRow</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i&lt;=</span> <span style="color: #d0d0d0">startRow</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">i++)</span>
+	<span style="color: #d0d0d0">{</span>
+		<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span> <span style="color: #d0d0d0">startCol</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j&lt;=</span> <span style="color: #d0d0d0">startCol</span> <span style="color: #d0d0d0">+</span> <span style="color: #d0d0d0">WINDOW_OFFSET;</span> <span style="color: #d0d0d0">j++)</span>
+		<span style="color: #d0d0d0">{</span>
+			<span style="color: #d0d0d0">pOut[inCol++][inRow]</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">pArray[j][i];</span>
+		<span style="color: #d0d0d0">}</span>
+		<span style="color: #d0d0d0">inCol=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+		<span style="color: #d0d0d0">inRow++;</span>
+	<span style="color: #d0d0d0">}</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">fillEmptyArray</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY])</span>
+<span style="color: #d0d0d0">{</span>
+    <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">i,j;</span>
+    <span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">i&lt;</span> <span style="color: #d0d0d0">SIZE_ARRAY;</span> <span style="color: #d0d0d0">i++)</span>
+    <span style="color: #d0d0d0">{</span>
+    	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">j&lt;</span> <span style="color: #d0d0d0">SIZE_ARRAY;</span> <span style="color: #d0d0d0">j++)</span>
+    	<span style="color: #d0d0d0">{</span>
+    		<span style="color: #d0d0d0">pArray[i][j]</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+    	<span style="color: #d0d0d0">}</span>
+    <span style="color: #d0d0d0">}</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">fillRandomArray</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY])</span>
+<span style="color: #d0d0d0">{</span>
+    <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">i,j;</span>
+    <span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">i&lt;</span> <span style="color: #d0d0d0">SIZE_ARRAY;</span> <span style="color: #d0d0d0">i++)</span>
+    <span style="color: #d0d0d0">{</span>
+    	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">j&lt;</span> <span style="color: #d0d0d0">SIZE_ARRAY;</span> <span style="color: #d0d0d0">j++)</span>
+    	<span style="color: #d0d0d0">{</span>
+    		<span style="color: #d0d0d0">pArray[i][j]</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">rand()</span> <span style="color: #d0d0d0">%</span> <span style="color: #3677a9">9</span> <span style="color: #d0d0d0">+</span> <span style="color: #3677a9">1</span><span style="color: #d0d0d0">;</span>
+    	<span style="color: #d0d0d0">}</span>
+    <span style="color: #d0d0d0">}</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">printArray</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY],</span> <span style="color: #d0d0d0">string</span> <span style="color: #d0d0d0">pIdentification)</span>
+<span style="color: #d0d0d0">{</span>
+    <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">i,j;</span>
+    <span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;----------------------------------------------------[%s] ARRAY is printed below----------------------------------------------------&quot;</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">pIdentification.c_str());</span>
+    <span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;\r\n&quot;</span><span style="color: #d0d0d0">);</span>
+    <span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(i=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">i&lt;</span> <span style="color: #d0d0d0">SIZE_ARRAY;</span> <span style="color: #d0d0d0">i++)</span>
+    <span style="color: #d0d0d0">{</span>
+    	<span style="color: #6ab825; font-weight: bold">for</span><span style="color: #d0d0d0">(j=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">j&lt;</span> <span style="color: #d0d0d0">SIZE_ARRAY;</span> <span style="color: #d0d0d0">j++)</span>
+    	<span style="color: #d0d0d0">{</span>
+    		<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;%d\t  &quot;</span><span style="color: #d0d0d0">,pArray[i][j]);</span>
+    	<span style="color: #d0d0d0">}</span>
+
+    	<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;\r\n&quot;</span><span style="color: #d0d0d0">);</span>
+    <span style="color: #d0d0d0">}</span>
+    <span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;----------------------------------------------------[%s] ARRAY is printed below----------------------------------------------------&quot;</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">pIdentification.c_str());</span>
+    <span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;\r\n&quot;</span><span style="color: #d0d0d0">);</span>
+<span style="color: #d0d0d0">}</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">printConsoleNotification</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint8_t</span> <span style="color: #d0d0d0">methodNumber,</span> <span style="color: #6ab825; font-weight: bold">double</span> <span style="color: #d0d0d0">pStartTimeStamp,</span> <span style="color: #6ab825; font-weight: bold">double</span> <span style="color: #d0d0d0">pStopTimeStamp)</span>
+<span style="color: #d0d0d0">{</span>
+	<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;\n********************************************\r\n&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;Time Cost for Parallel Method %d : %lf\n&quot;</span><span style="color: #d0d0d0">,</span> <span style="color: #d0d0d0">methodNumber,</span> <span style="color: #d0d0d0">(pStopTimeStamp</span> <span style="color: #d0d0d0">-</span> <span style="color: #d0d0d0">pStartTimeStamp));</span>
+	<span style="color: #d0d0d0">printf(</span><span style="color: #ed9d13">&quot;********************************************\r\n\n&quot;</span><span style="color: #d0d0d0">);</span>
+	<span style="color: #d0d0d0">startTimeStamp=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span> <span style="color: #d0d0d0">stopTimeStamp=</span><span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+<span style="color: #d0d0d0">}</span>
+
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">serialMultiplication</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">serialMultiplication_Stable</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method1</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method2</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method3</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Stable_Master</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method_Stable_Non_Schedule</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method_Stable_1</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">parallelMultiplication_Method_Stable_2</span><span style="color: #d0d0d0">();</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">serialMultiplication_Stable_Master</span><span style="color: #d0d0d0">();</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">fillEmptyArray</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY]);</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">fillRandomArray</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY]);</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">printArray</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY],</span> <span style="color: #d0d0d0">string</span> <span style="color: #d0d0d0">pIdentification);</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">printConsoleNotification</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint8_t</span> <span style="color: #d0d0d0">methodNumber,</span> <span style="color: #6ab825; font-weight: bold">double</span> <span style="color: #d0d0d0">pStartTimeStamp,</span> <span style="color: #6ab825; font-weight: bold">double</span> <span style="color: #d0d0d0">pStopTimeStamp);</span>
+
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">getSubMatrix</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY],</span> <span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pOut[SIZE_WINDOW][SIZE_WINDOW],</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startRow,</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startCol);</span>
+<span style="color: #6ab825; font-weight: bold">void</span> <span style="color: #447fcf">getDiagonalMatrix</span><span style="color: #d0d0d0">(</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pArray[SIZE_ARRAY][SIZE_ARRAY],</span><span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">pOut[SIZE_WINDOW][SIZE_WINDOW],</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startRow,</span> <span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">startCol);</span>
+
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">i,j,k,</span> <span style="color: #d0d0d0">stop;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">outerIterRow,</span> <span style="color: #d0d0d0">outerIterCol;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">manualIteratorCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #3677a9">0</span><span style="color: #d0d0d0">;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">rA,cA;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">rB,cB;</span>
+
+<span style="color: #6ab825; font-weight: bold">static</span> <span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">inputImage[SIZE_ARRAY][SIZE_ARRAY];</span>
+<span style="color: #6ab825; font-weight: bold">static</span> <span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">outputImage[SIZE_ARRAY][SIZE_ARRAY];</span>
+
+<span style="color: #999999; font-style: italic">//MATRIX B is determining during multiplication automatically according to inputImage&#39;s position.</span>
+
+<span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">flowArray[SIZE_WINDOW][SIZE_WINDOW];</span>
+<span style="color: #6ab825; font-weight: bold">uint16_t</span> <span style="color: #d0d0d0">diagonallyMirroredArray[SIZE_WINDOW][SIZE_WINDOW];</span>
+
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">GET_LOWER_DIAGONAL_INDEX_MIN_ROW;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxRow</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">GET_LOWER_DIAGONAL_INDEX_MAX_ROW;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">lowerDiagonalIndexMinCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">GET_LOWER_DIAGONAL_INDEX_MIN_COL;</span>
+<span style="color: #6ab825; font-weight: bold">uint32_t</span> <span style="color: #d0d0d0">lowerDiagonalIndexMaxCol</span> <span style="color: #d0d0d0">=</span> <span style="color: #d0d0d0">GET_LOWER_DIAGONAL_INDEX_MAX_COL;</span>
+
+<span style="color: #6ab825; font-weight: bold">double</span> <span style="color: #d0d0d0">startTimeStamp;</span>
+<span style="color: #6ab825; font-weight: bold">double</span> <span style="color: #d0d0d0">stopTimeStamp;</span>
+</pre></div>
+
+			 
 <div style="background: #202020; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #d0d0d0">You</span> <span style="color: #d0d0d0">can</span> <span style="color: #d0d0d0">run</span> <span style="color: #6ab825; font-weight: bold">and</span> <span style="color: #d0d0d0">test</span> <span style="color: #d0d0d0">code</span> <span style="color: #d0d0d0">directly</span> <span style="color: #d0d0d0">by</span> <span style="color: #d0d0d0">copying/pasting</span> <span style="color: #d0d0d0">into</span> <span style="color: #d0d0d0">ubuntu</span> <span style="color: #d0d0d0">terminal:</span>
 <span style="color: #d0d0d0">OMP_NUM_THREADS=</span><span style="color: #3677a9">1</span> <span style="color: #d0d0d0">./termProject</span> <span style="color: #3677a9">20</span> <span style="color: #3677a9">1</span>
 <span style="color: #d0d0d0">OMP_NUM_THREADS=</span><span style="color: #3677a9">2</span> <span style="color: #d0d0d0">./termProject</span> <span style="color: #3677a9">20</span> <span style="color: #3677a9">1</span>
